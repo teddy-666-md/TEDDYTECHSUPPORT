@@ -1,0 +1,14 @@
+{
+  "name": "support-app",
+  "version": "1.0.0",
+  "main": "api/index.js",
+  "scripts": { "start": "node api/index.js" },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.7",
+    "nodemailer": "^6.9.13",
+    "@google/generative-ai": "^0.15.0",
+    "mongoose": "^8.2.0"
+  }
+}
