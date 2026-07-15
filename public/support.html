@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:linear-gradient(135deg,#0f0f0f 0%,#1a1a1a 100%);color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.card{background:rgba(20,20,20,0.9);padding:35px;border-radius:20px;width:100%;max-width:480px;border:1px solid rgba(0,120,212,0.3)}
+h1{text-align:center;color:#0078D4;margin-bottom:8px;font-size:26px}
+p{text-align:center;color:#aaa;font-size:14px;margin-bottom:25px}
+input,textarea{width:100%;padding:14px;margin-bottom:15px;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:10px;color:#fff;outline:none}
+button{width:100%;padding:15px;background:linear-gradient(90deg,#0078D4,#106EBE);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:16px;cursor:pointer}
+#result{text-align:center;margin-top:15px;font-size:14px}
+.loader{display:none;text-align:center;color:#0078D4;margin-top:10px}
+.ticket{background:#111;padding:10px;border-radius:8px;border:1px dashed #0078D4;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="card">
+    <h1>📩 Contact Support</h1>
+    <p>Instant AI Reply + Ticket ID</p>
+    <input type="text" id="name" placeholder="👤 Your Name" required>
+    <input type="email" id="email" placeholder="📧 Your Email" required>
+    <textarea id="message" placeholder="💬 Describe your issue..." rows="5" required></textarea>
+    <button id="sendBtn" onclick="sendSupport()">Create Ticket</button>
+    <div class="loader" id="loader">⏳ Generating AI Reply...</div>
+    <div id="result"></div>
+</div>
+<script>
+async function sendSupport(){
+    const name=document.getElementById('name').value.trim();
+    const email=document.getElementById('email').value.trim();
+    const message=document.getElementById('message').value.trim();
+    const result=document.getElementById('result');
+    const btn=document.getElementById('sendBtn');
+    const loader=document.getElementById('loader');
+    if(!name||!email||!message){result.innerHTML='<span style="color:#ff4444">❌ Fill all fields</span>';return}
+    btn.disabled=true;loader.style.display='block';result.innerHTML='';
+    try{
+        const res=await fetch('/api/support',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,message})});
+        const data=await res.json();
+        if(data.success){
+            result.innerHTML=`<div class="ticket">✅ Ticket: <b>${data.ticketID}</b></div><b>AI Reply:</b><br>${data.aiReply}<br><br><small style="color:#888">Check your email</small>`;
+            document.getElementById('name').value='';document.getElementById('email').value='';document.getElementById('message').value='';
+        }else{result.innerHTML=`<span style="color:#ff4444">❌ ${data.error}</span>`}
+    }catch(e){result.innerHTML='<span style="color:#ff4444">❌ Server error</span>'}finally{btn.disabled=false;loader.style.display='none'}
+}
+</script>
+</body>
+</html>
